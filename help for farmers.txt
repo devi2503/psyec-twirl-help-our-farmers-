@@ -1,0 +1,306 @@
+import numpy as np
+import pandas as pd
+import sklearn.preprocessing as preprocessing
+import cPickle as pickle
+def pd(head):
+    df = pd.read_csv("crop.csv")
+    df.head()
+     dataset = pd.read_csv("C:/Users/ACER/Desktop/crop.csv")
+
+
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.metrics import mean_squared_error as mse
+from sklearn.model_selection import GridSearchCV
+from sklearn.tree import DecisionTreeRegressor
+
+
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+
+RAW_WEATHER_FILE = 'data/weather/weather_all.csv'
+PROCESSED_YIELD = "data/yield/yield_proc_data.csv"
+COMBINED = 'data/combined.csv'
+IMAGES_FOLDER = 'images/'
+
+
+'TRAIN = True  
+MIN_YEAR = 2009  
+MAX_YEAR = 2011  
+TEST_SPLIT = 2011 
+DISTRICT = 'MADURAI'
+
+
+
+if TRAIN == False:
+    MIN_YEAR = TEST_SPLIT  
+    MAX_YEAR = MAX_YEAR  
+    TEST_SPLIT = MAX_YEAR  
+
+
+def weather_dates(df, MIN_YEAR, MAX_YEAR):
+    '''
+    :param df: dataframe containing location specific weather
+    :param MIN_YEAR: 2010 (start of training set)
+    :param MAX_YEAR: (end of test set)
+    :return:  returns the pre-processed dataframe
+    '''
+
+def weather(df,crop_type,year,season,area,state):
+    df['crop_type'] = pd.to_datetime(df['apparentTemperatureMaxTime'], unit='s')
+    df['year'] = [x.year for x in df['dates']]
+    df['season'] = [x.month for x in df['season']]
+    df.drop('area', axis=1, inplace=True)
+    df['state'] = [x.lower() for x in df['state']]
+
+
+def df(times,unnamed):
+    df_times = df.filter(like='Time', axis=1).columns.tolist()
+    df_unnamed = df.filter(like='Unnamed', axis=1).columns.tolist()
+    df.drop(df_times, axis=1, inplace=True)
+    df.drop(df_unnamed, axis=1, inplace=True)
+    df.drop(['moonPhase', 'key', 'time', 'precipType'], axis=1, inplace=True)
+
+
+def year(df,drop):
+    df = df.drop(df[df.year < MIN_YEAR].index)
+    df = df.drop(df[df.year > TEST_SPLIT].index)
+    return df
+
+
+def join_weather_yield(wdf, ydf):
+    '''
+    :param wdf: dataframe of weather data
+    :param ydf: dataframe of yield information
+    :return: combined weather/yield df based on state, county, year
+    '''
+    wdf.drop('dates', axis=1, inplace=True)
+    wdf['county'] = wdf['county'].apply(str.lower)
+    DROP_LIST = ['visibility', 'lat', 'long', 'month', 'windBearing', 'precipProbability', 'aveTemp', 'pressure',
+                 'windBearing', 'precipIntensityMax', 'cloudCover', 'temperatureMax', 'windSpeed',]
+
+
+def df(month):
+    df = df.drop(df[df.month < 4].index)
+    df = df.drop(df[df.month > 9].index)
+
+
+def df(year):
+    df = df.drop(df[df.year < MIN_YEAR].index)
+    df = df.drop(df[df.year > MAX_YEAR].index)
+    return df
+
+
+
+def yield_dates(df, MIN_YEAR, TEST_SPLIT):
+    '''
+    :param df: pandas df of downloaded yield data
+    :param MIN_YEAR: 2010 (start of training set)
+    :param MAX_YEAR: (end of test set)
+    :return: returns the pre-processed dataframe
+    '''
+
+def df(state_name,drop):
+    df.dropna(axis=1, how='all', inplace=True)
+    df['state_name'] = df['state_name'].apply(lambda x: x.lower())
+    df.rename(columns={'state_name': 'state', 'Value': 'cyield'}, inplace=True)
+    df.drop('Unnamed: 0', axis=1, inplace=True)
+
+
+def year(df):
+    df = df.drop(df[df.year < MIN_YEAR].index)
+    df = df.drop(df[df.year > TEST_SPLIT].index)
+    return df
+
+
+def join_weather_yield(wdf, ydf):
+    '''
+    :param wdf: dataframe of weather data
+    :param ydf: dataframe of yield information
+    :return: combined weather/yield df based on state, county, year
+    '''
+    wdf.drop('dates', axis=1, inplace=True)
+    wdf['county'] = wdf['county'].apply(str.lower)
+    DROP_LIST = ['visibility', 'lat', 'long', 'month', 'windBearing', 'precipProbability', 'aveTemp', 'pressure',
+                 'windBearing', 'precipIntensityMax', 'cloudCover', 'temperatureMax', 'windSpeed',
+                 'apparentTemperatureMax']
+
+
+def wdf(agg,cols):
+    agg_dict = dict()
+    cols_list = list(wdf.columns.tolist())
+    group_by_columns = ['county', 'state', 'year']
+    cols_to_sum = ['days_under0', 'days_over32', 'days_over42', 'days_under_n10', 'precipAccumulation', 'precip']
+    cols_to_aggregate = [x for x in cols_list if x not in group_by_columns]
+    for i in cols_to_aggregate:
+        if i in cols_to_sum:
+            agg_dict[i] = np.sum
+        else:
+            agg_dict[i] = np.mean
+
+print "Fixing resulting NAs and missing data"
+
+
+
+def wdf_years(agg):
+    wdf_years = wdf.groupby(group_by_columns).agg(agg_dict)
+    wdf_years['precipAccumulation'].fillna(0, inplace=True)
+
+
+def ydf_groupby(merged,columnns):
+    ydf.groupby(group_by_columns).mean()
+    df_merged = pd.merge(ydf, wdf_years, how='left', on=['county', 'state', 'year'])
+    df_merged.dropna(axis=0, how='any', inplace=True)
+    return df_merged
+
+
+
+def is_over(x, val):
+    '''
+    simple helper function for counting...
+    :param x: value of data point
+    :param val: comparision value
+    :return: returns a value 1 if it is greater than val 0 if lower
+    '''
+    if x > val:
+        return 1
+    else:
+        return 0
+
+
+
+def is_under(x, val):
+    '''
+    simple helper function for counting...
+    :param x: value of data point
+    :param val: comparision value
+    :return: returns a value 0 if it is greater than val 1 if lower
+    '''
+    if x < val:
+        return 1
+    else:
+        return 0
+
+
+
+def my_ada(X, y, m_depth=3, n_est=28, rnd=None, lr=0.8225):
+    '''
+    quick wrapping function for sklearn ada_boost analysis
+    :param X: features
+    :param y: target
+    :param m_depth: max depth of Dtree 'stumps'
+    :param n_est: number of estimators to use
+    :param rnd: sets the random seed if you want
+    :param lr: learning rate
+    :return: returns the model fully fitted and predicted
+    '''
+    reg_ada = AdaBoostRegressor(DecisionTreeRegressor(max_depth=m_depth), \
+                                n_estimators=n_est, random_state=rnd, learning_rate=lr)
+    reg_ada.fit(X, y)
+    reg_ada.predict(X)
+    return reg_ada
+
+
+def feature_importance(cols, feat_imps):
+    '''
+    function to assign feature names to feature importance list out of sklearn
+    :param cols: is the pands data series containing the list of features
+    :param feat_imps: the data series containing the resulting feature importance values
+    :return: returns a consolidated pandas DF of the features and there determined importance
+    '''
+    df = pd.DataFrame()
+    df['feat'] = cols
+    df['imp'] = feat_imps
+    df.sort_values('imp', ascending=False, inplace=True)
+    df = df.loc[df['imp'] > 0]
+    df.reset_index()
+    return df
+
+
+
+
+def weather_dates(raw,join):
+    if __name__ == '__main__':
+
+        print 'Loading raw weather data....'
+              df_weather = weather_dates(pd.read_csv(RAW_WEATHER_FILE), MIN_YEAR, TEST_SPLIT)
+
+        print 'Loading yield files.........'
+              df_yield = yield_dates(pd.read_csv(PROCESSED_YIELD), MIN_YEAR, TEST_SPLIT)
+
+        print 'combining the two files for analysis'
+               df_join = join_weather_yield(df_weather, df_yield)
+               df_join.to_csv(COMBINED)
+
+
+
+
+def pd(cyield,year,state):
+    _dummy = df_join[df_join['cyield'] >= 45]
+    _dummy = _dummy[_dummy['cyield'] <= 170]
+    if not STATE == 'ALL': _dummy = _dummy[_dummy.state != 'ID']
+    sfl = _dummy.copy()
+    _dummy.pop('year')
+    _dummy.pop('county')
+    _dummy = pd.get_dummies((_dummy))
+
+
+def TRAIN(X,Y) :
+    y = _dummy.pop('cyield')
+    X = _dummy
+    print '\n\n'
+    print 'Running model on TRAIN? ', TRAIN
+def reg_ada(data,pickles):
+    if TRAIN == False:
+        
+        with open('data/pickles/reg_ada_' + STATE + '_xtr.pkl') as f:
+            reg_ada = pickle.load(f)
+    else:
+        reg_ada = my_ada(X, y, m_depth=3, n_est=8, rnd=42, lr=1.28225)
+
+
+
+def _best_params(np,grid):
+    lr_range = np.linspace(0.1, 10, 100)
+    n_est = [int(i) for i in (np.linspace(5, 100, 1))]
+    params = {'n_estimators': n_est, 'learning_rate': lr_range}
+    grid = GridSearchCV(estimator=reg_ada, param_grid=params, n_jobs=-1, return_train_score=True)
+    grid.fit(X, y)
+    best_params = grid.best_params_
+print _best_params
+
+
+
+def reg_ada(y_ada,ada_mse):
+    y_ada = reg_ada.predict(X)
+    ada_mse = mse(y, y_ada)
+    print '\n\n'
+    print 'TRAINING SET? ', TRAIN
+    print 'STATES: %s  Dates: %s --> %s' % (STATE, MIN_YEAR, TEST_SPLIT)
+    print '================================================'
+    print 'Adaboost   r2:   ', reg_ada.score(X, y)
+    print 'Adaboost  MSE:   ', ada_mse
+    print 'Adaboost RMSE:   ', np.sqrt(ada_mse)
+print '============================================'
+
+
+
+def feat_imp(X):
+    feat_imp = feature_importance(X.columns.tolist(), reg_ada.feature_importances_)
+
+
+
+
+def TRAIN(data,pickles):
+    if TRAIN == True:
+        with open('data/pickles/reg_ada_' + STATE + '_xtr.pkl', 'wb') as f:
+            pickle.dump(reg_ada, f)
+
+
+
+def sfl(res):
+    res = sfl
+    res['y_pred'] = y_ada
+    
+    df_plt = resdf_plt['y_true'] = y
